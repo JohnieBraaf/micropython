@@ -45,6 +45,17 @@
 #define MICROPY_HW_OSPIFLASH_IO7    (pin_G14)
 #endif
 
+// espressif ESP-PSRAM64H 64Mbit external QSPI ram
+//#define MICROPY_HW_SPIRAM_SIZE_BITS_LOG2 (26)
+//#define MICROPY_HW_SPIRAM_CS             (pyb_pin_OSPI_BK1_NCS)
+//#define MICROPY_HW_SPIRAM_SCK            (pyb_pin_OSPI_CLK)
+//#define MICROPY_HW_SPIRAM_IO0            (pyb_pin_OSPI_BK1_IO0)
+//#define MICROPY_HW_SPIRAM_IO1            (pyb_pin_OSPI_BK1_IO1)
+//#define MICROPY_HW_SPIRAM_IO2            (pyb_pin_OSPI_BK1_IO2)
+//#define MICROPY_HW_SPIRAM_IO3            (pyb_pin_OSPI_BK1_IO3)
+
+#define MICROPY_HW_SPIRAM_STARTUP_TEST (1)
+
 // UART buses
 #define MICROPY_HW_UART1_TX         (pin_A9)
 #define MICROPY_HW_UART1_RX         (pin_A10)

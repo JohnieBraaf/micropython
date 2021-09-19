@@ -58,6 +58,7 @@
 #include "stm32h7xx_ll_pwr.h"
 #include "stm32h7xx_ll_rtc.h"
 #include "stm32h7xx_ll_usart.h"
+#include "stm32h7xx_hal_ospi.h"
 
 // Enable various HAL modules
 #define HAL_ADC_MODULE_ENABLED
@@ -85,6 +86,7 @@
 #define HAL_UART_MODULE_ENABLED
 #define HAL_USART_MODULE_ENABLED
 #define HAL_WWDG_MODULE_ENABLED
+#define HAL_OSPI_MODULE_ENABLED
 
 // Oscillator values in Hz
 #define CSI_VALUE (4000000)

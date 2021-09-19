@@ -79,6 +79,7 @@
 #include "storage.h"
 #include "sdcard.h"
 #include "sdram.h"
+#include "spiram.h"
 #include "rng.h"
 #include "accel.h"
 #include "servo.h"
@@ -402,6 +403,9 @@ void stm32_main(uint32_t reset_mode) {
     sdram_valid = sdram_test(false);
     #endif
     #endif
+    #if defined(MICROPY_HW_SPIRAM_SIZE_BITS_LOG2)
+    spiram_init();
+    #endif
     #if MICROPY_PY_THREAD
     pyb_thread_init(&pyb_thread_main);
     #endif
@@ -601,6 +605,10 @@ soft_reset:
     #endif
 
     // At this point everything is fully configured and initialised.
+
+    #if defined(MICROPY_HW_SPIRAM_STARTUP_TEST)
+    spiram_dmesg();
+    #endif
 
     // Run main.py (or whatever else a board configures at this stage).
     if (MICROPY_BOARD_RUN_MAIN_PY(&state) == BOARDCTRL_GOTO_SOFT_RESET_EXIT) {

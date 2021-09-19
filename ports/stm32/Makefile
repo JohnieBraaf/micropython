@@ -340,6 +340,7 @@ SRC_C += \
 	flash.c \
 	flashbdev.c \
 	spibdev.c \
+	spiram.c \
 	storage.c \
 	sdcard.c \
 	sdram.c \

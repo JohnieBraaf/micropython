@@ -5,6 +5,7 @@ MCU_SERIES = h7
 CMSIS_MCU = STM32H7B3xxQ
 MICROPY_FLOAT_IMPL = double
 AF_FILE = boards/stm32h7b3_af.csv
+#AF_FILE = boards/stm32h743_af.csv
 
 ifeq ($(USE_MBOOT),1)
 # When using Mboot all the text goes together after the filesystem

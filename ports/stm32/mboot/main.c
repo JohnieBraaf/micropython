@@ -279,7 +279,11 @@ void SystemClock_Config(void) {
     RCC->PLLCFGR = RCC_PLLCFGR_DIVP1EN | RCC_PLLCFGR_DIVQ1EN;
 
     // Select PLL1-Q for USB clock source
+    #if defined(STM32H7A3xx) || defined(STM32H7A3xxQ) || defined(STM32H7B3xx) || defined(STM32H7B3xxQ)
+    RCC->CDCCIP2R |= 1 << RCC_CDCCIP2R_USBSEL_Pos;
+    #else
     RCC->D2CCIP2R |= 1 << RCC_D2CCIP2R_USBSEL_Pos;
+    #endif
 
     // Enable PLL1
     __HAL_RCC_PLL_ENABLE();
@@ -292,10 +296,17 @@ void SystemClock_Config(void) {
     }
 
     // Configure AHB divider
+    #if defined(STM32H7A3xx) || defined(STM32H7A3xxQ) || defined(STM32H7B3xx) || defined(STM32H7B3xxQ)
+    RCC->CDCFGR1 =
+        0 << RCC_CDCFGR1_CDCPRE_Pos // SYSCLK prescaler of 1
+        | 8 << RCC_CDCFGR1_HPRE_Pos // AHB prescaler of 2
+        ;
+    #else
     RCC->D1CFGR =
         0 << RCC_D1CFGR_D1CPRE_Pos // SYSCLK prescaler of 1
         | 8 << RCC_D1CFGR_HPRE_Pos // AHB prescaler of 2
         ;
+    #endif
 
     // Configure SYSCLK source from PLL
     __HAL_RCC_SYSCLK_CONFIG(RCC_SYSCLKSOURCE_PLLCLK);
@@ -308,6 +319,18 @@ void SystemClock_Config(void) {
     }
 
     // Set APB clock dividers
+    #if defined(STM32H7A3xx) || defined(STM32H7A3xxQ) || defined(STM32H7B3xx) | defined(STM32H7B3xxQ)
+    RCC->CDCFGR1 |=
+        4 << RCC_CDCFGR1_CDPPRE_Pos // APB3 prescaler of 2
+        ;
+    RCC->CDCFGR2 =
+        4 << RCC_CDCFGR2_CDPPRE2_Pos // APB2 prescaler of 2
+        | 4 << RCC_CDCFGR2_CDPPRE1_Pos // APB1 prescaler of 2
+        ;
+    RCC->SRDCFGR =
+        4 << RCC_SRDCFGR_SRDPPRE_Pos // APB4 prescaler of 2
+        ;
+    #else
     RCC->D1CFGR |=
         4 << RCC_D1CFGR_D1PPRE_Pos // APB3 prescaler of 2
         ;
@@ -318,6 +341,7 @@ void SystemClock_Config(void) {
     RCC->D3CFGR =
         4 << RCC_D3CFGR_D3PPRE_Pos // APB4 prescaler of 2
         ;
+    #endif
 
     // Update clock value and reconfigure systick now that the frequency changed
     SystemCoreClock = CORE_PLL_FREQ;
@@ -503,6 +527,8 @@ void led0_update() {
 #define FLASH_LAYOUT_STR "@Internal Flash  /0x08000000/16*128Kg" MBOOT_SPIFLASH_LAYOUT MBOOT_SPIFLASH2_LAYOUT
 #elif defined(STM32H750xx)
 #define FLASH_LAYOUT_STR "@Internal Flash  /0x08000000/01*128Kg" MBOOT_SPIFLASH_LAYOUT MBOOT_SPIFLASH2_LAYOUT
+#elif defined(STM32H7A3xx) || defined(STM32H7A3xxQ) || defined(STM32H7B3xx) | defined(STM32H7B3xxQ)
+#define FLASH_LAYOUT_STR "@Internal Flash  /0x08000000/256*08Kg" MBOOT_SPIFLASH_LAYOUT MBOOT_SPIFLASH2_LAYOUT
 #elif defined(STM32WB)
 #define FLASH_LAYOUT_STR "@Internal Flash  /0x08000000/256*04Kg" MBOOT_SPIFLASH_LAYOUT MBOOT_SPIFLASH2_LAYOUT
 #endif
@@ -1425,10 +1451,17 @@ void stm32_main(int initial_r0) {
     }
 
     // Reset the kernel clock configuration registers for all domains.
+    if defined(STM32H7A3xx) || defined(STM32H7A3xxQ) || defined(STM32H7B3xx) | defined(STM32H7B3xxQ)
+    RCC->CDCCIPR = 0x00000000;
+    RCC->CDCCIP1R = 0x00000000;
+    RCC->CDCCIP2R = 0x00000000;
+    RCC->CDCCIPR = 0x00000000;
+    #else
     RCC->D1CCIPR = 0x00000000;
     RCC->D2CCIP1R = 0x00000000;
     RCC->D2CCIP2R = 0x00000000;
     RCC->D3CCIPR = 0x00000000;
+    #endif
     #endif
 
     // Make sure IRQ vector table points to flash where this bootloader lives.
